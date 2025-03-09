@@ -156,6 +156,76 @@
     </div> 
 
 
+
+
+    <center>
+            <div class="container mt-4">
+                <div class="card p-4 shadow-sm">
+                    <h2 class="text-center mb-3">Add Property</h2>
+            
+                    <form action="" method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        <div class="mb-3">
+                            <label for="img" class="form-label">Upload Image</label>
+                            <input type="file" id="img" name="img" accept="image/*" class="form-control">
+                        </div>
+            
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label for="goal" class="form-label">Goal</label>
+                                <select id="goal" name="goal" class="form-control">
+                                    <option value="For Sale">For Sale</option>
+                                    <option value="For Rent">For Rent</option>
+                                </select>
+                            </div>
+                            <div class="col-md-6">
+                                <label for="name" class="form-label">Property Name</label>
+                                <input type="text" id="name" name="name" placeholder="Property Name" class="form-control">
+                            </div>
+                        </div>
+            
+                        <div class="row g-3 mt-2">
+                            <div class="col-md-6">
+                                <label for="price" class="form-label">Price ($)</label>
+                                <input type="number" id="price" name="price" placeholder="Price" class="form-control">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="territory" class="form-label">Size (Sqft)</label>
+                                <input type="number" id="territory" name="teritory" placeholder="Size" class="form-control">
+                            </div>
+                        </div>
+            
+                        <div class="row g-3 mt-2">
+                            <div class="col-md-6">
+                                <label for="bedrooms" class="form-label">Bedrooms</label>
+                                <input type="number" id="bedrooms" name="bedrooms" placeholder="Bedrooms" class="form-control">
+                            </div>
+                            <div class="col-md-6">
+                                <label for="bathrooms" class="form-label">Bathrooms</label>
+                                <input type="number" id="bathrooms" name="bathrooms" placeholder="Bathrooms" class="form-control">
+                            </div>
+                        </div>
+            
+                        <div class="mt-2">
+                            <label for="info" class="form-label">Short Info</label>
+                            <input type="text" id="info" name="info" placeholder="Brief Description" class="form-control">
+                        </div>
+            
+                        <div class="mt-2">
+                            <label for="address" class="form-label">Address</label>
+                            <input type="text" id="address" name="adress" placeholder="Location" class="form-control">
+                        </div>
+            
+                        <div class="text-center mt-3" style="color: #00B98E;">
+                            <button type="submit" class="btn btn-success" >Add Property</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+    </center>
+        
+
+
         <!-- Call to Action Start -->
         <div class="container-xxl py-5">
             <div class="container">

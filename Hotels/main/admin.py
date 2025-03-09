@@ -21,3 +21,4 @@ admin.site.register(Gallery)
 
 #-----------------------------------
 admin.site.register(AboutStatus)
+admin.site.register(ContactModel)

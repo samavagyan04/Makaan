@@ -1,9 +1,66 @@
 from django.shortcuts import render,redirect
 from django.views.generic import ListView,DetailView
+from django.core.mail import EmailMessage
 from .models import *
 from .forms import *
+from django.contrib.auth import authenticate,login,logout
+from Hotels.settings import EMAIL_HOST_USER
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
+def RegisterPage(request):
+    template_name = 'register.html'
+
+    form = UserCreationForm
+    message = ''
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            obj = form.save(commit=False)
+            obj.email = request.POST.get("email")
+            obj.save()
+            emailll = EmailMessage(
+                subject = f'Hello {request.POST.get("username")}',
+                body = 'Sign up completed succesfully',
+                from_email=EMAIL_HOST_USER,
+                to = [request.POST.get('email')]
+            )
+            emailll.send()
+            return redirect('login')
+        else:
+            message = form.errors
+    
+    context = {
+        'message':message,
+        'form':form,
+    }
+
+    return render(request,template_name,context)
+    
+
+def LoginPage(request):
+    template_name = 'login.html'
+
+    message = ''
+    if request.method == 'POST':
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(username = username,password = password)
+        if user is not None:
+            login(request,user)
+            return redirect('home')
+        else:
+            message = 'user not found'
+    
+    context = {'message':message}
+
+    return render(request,template_name,context)
+
+
+def Logout(request):
+    logout(request)
+    return redirect('login')
+    
 
 
 def MainInfoF(context,title,subtitle):
@@ -119,6 +176,25 @@ class PropertyListView(ListView):
             'contactagent':contactagent
             }
         MainInfoF(context,'Property List','Property List')
+
+        return render(request,self.template_name,context)
+    
+    def post(self,request):
+        form = AddPropertyForm(request.POST,request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('pr_list')
+        else:
+            print(form.errors)
+            form = AddPropertyForm()
+        propertylisting = PropertyListing.objects.all()
+        contactagent = ContactAgent.objects.all()
+
+        context = {
+            'propertylisting':propertylisting,
+            'contactagent':contactagent,
+            'form':form,
+                  }
 
         return render(request,self.template_name,context)
     

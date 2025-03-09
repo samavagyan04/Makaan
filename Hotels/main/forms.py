@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from django.contrib.auth.forms import UserCreationForm
 from django.forms import ModelForm
-from .models import ContactModel
+from .models import ContactModel,PropertyListing
 
 
 
@@ -16,7 +16,7 @@ class ContactForm(ModelForm):
         model = ContactModel
         fields = '__all__'
 
-class ContactForm(ModelForm):
+class AddPropertyForm(ModelForm):
     class Meta:
-        model = ContactModel
+        model =PropertyListing
         fields = '__all__'
