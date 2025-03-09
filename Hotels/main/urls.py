@@ -3,5 +3,7 @@ from .views import *
 
 urlpatterns = [
     path('',HomeListView.as_view(),name='home'),
-     path('about/',AboutListView.as_view(),name='about')
+    path('about/',AboutListView.as_view(),name='about'),
+    path('pr_list/',PropertyListView.as_view(),name = 'pr_list'),
+    path('pr_type/',PropertyType.as_view(),name = 'pr_type')
 ]
