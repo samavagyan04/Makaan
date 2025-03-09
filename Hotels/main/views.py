@@ -1,6 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render,redirect
 from django.views.generic import ListView,DetailView
 from .models import *
+from .forms import *
 
 
 
@@ -11,6 +12,34 @@ def MainInfoF(context,title,subtitle):
     context['gallery'] = Gallery.objects.all()
     context['subtitle'] = subtitle
     context['title'] = title
+
+
+def SearchItem(request):
+    word = request.GET.get('q')
+    loc_q = request.GET.get('l')
+    goall = request.GET.get('goall')
+    proplisting = PropertyListing.objects.filter(name__icontains = word,adress__icontains = loc_q,npatak = goall)
+    statusinfo = HomeStatus.objects.all()
+    imgcycle = ImageCycle.objects.get()
+    propertyTypesJarang = PropertyTypesJarang.objects.all()
+    moreinformation = MoreInformation.objects.all()
+    contactagent = ContactAgent.objects.all()
+    propertyagent = PropertyAgent.objects.all()
+    client = Client.objects.all()
+    context = {
+        'statusinfo':statusinfo,
+        'imgcycle':imgcycle,
+        'propertyTypesJarang':propertyTypesJarang,
+        'moreinformation':moreinformation,
+        'proplisting':proplisting,
+        'contactagent':contactagent,
+        'propertyagent':propertyagent,
+        'client':client,
+                }
+    MainInfoF(context,'home','')
+    
+
+    return render(request,'index.html',context)
 
 
 
@@ -58,7 +87,7 @@ class AboutListView(ListView):
         moreinformation= MoreInformation.objects.all()
         contactagent=ContactAgent.objects.all()
         propertyagent=PropertyAgent.objects.all()
-        gallery=Gallery.objects.all()
+        
 
         context={
             'aboutstatus':aboutstatus,
@@ -66,7 +95,7 @@ class AboutListView(ListView):
             'moreinformation':moreinformation,
             'contactagent':contactagent,
             'propertyagent':propertyagent,
-            'gallery':gallery
+            
            
 
         }
@@ -109,3 +138,78 @@ class PropertyType(ListView):
         }
         MainInfoF(context,'Property Type','Property Type')
         return render(request,self.template_name,context)
+
+#----------------------------------------------------------------------
+
+class PropertyAgents(ListView):
+    template_name='property-agent.html'
+
+    def get(self,request):
+        propertyagent=PropertyAgent.objects.all()
+        contactagent=ContactAgent.objects.all()
+
+        context={
+            'propertyagent':propertyagent,
+            'contactagent':contactagent
+        }
+        MainInfoF(context,'Property Agent','Property Agent')
+
+        return render(request,self.template_name,context)
+    
+#-------------------------------------------------------------------------
+    
+class Testimonial(ListView):
+    template_name='testimonial.html'
+
+    def get(self,request):
+        client=Client.objects.all()
+
+        context={
+            'client':client
+        }
+        MainInfoF(context,'Testimonial','Testimonial')
+
+        return render(request,self.template_name,context)
+
+#-------------------------------------------------------------------------
+
+class ContactPage(DetailView):
+    template_name = 'contact.html'
+
+
+    def get(self, request):
+        if request.user.is_authenticated:
+            name = request.user.username
+            email = request.user.email
+        else:
+            name = ''
+            email = ''
+
+        form = ContactForm()
+
+        context = {
+            'form':form,
+            'name':name,
+            'email':email
+                  }
+        MainInfoF(context,'contact','Contact Us')
+        return render(request,self.template_name,context)
+    
+    def post(self,request):
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('home')
+        else:
+            form = ContactForm()
+
+
+        context = {
+            'form':form,
+
+
+                  }
+
+        MainInfoF(context,'contact','Contact Us')
+        return render(request,self.template_name,context)
+

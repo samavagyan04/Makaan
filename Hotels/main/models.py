@@ -112,3 +112,15 @@ class AboutStatus(models.Model):
 
     def __str__(self):
         return 'AboutStatus'
+    
+#-------------------------------------------------------------------------------------
+#-------------------------------------------------------------------------------------
+
+class ContactModel(models.Model):
+    name = models.CharField('Your name',max_length=255,blank=True)
+    email = models.EmailField('Your Email',blank=True)
+    subject = models.CharField('Subject',max_length=255)
+    message = models.TextField('Message')
+
+    def __str__(self):
+        return self.name
