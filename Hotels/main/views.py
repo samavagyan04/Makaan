@@ -72,26 +72,33 @@ def MainInfoF(context,title,subtitle):
 
 
 def SearchItem(request):
-    word = request.GET.get('q')
+    word = request.GET.get('q')     
     loc_q = request.GET.get('l')
     goall = request.GET.get('goall')
-    proplisting = PropertyListing.objects.filter(name__icontains = word,adress__icontains = loc_q,npatak = goall)
-    statusinfo = HomeStatus.objects.all()
-    imgcycle = ImageCycle.objects.get()
-    propertyTypesJarang = PropertyTypesJarang.objects.all()
-    moreinformation = MoreInformation.objects.all()
-    contactagent = ContactAgent.objects.all()
-    propertyagent = PropertyAgent.objects.all()
-    client = Client.objects.all()
+    propertylisting = PropertyListing.objects.filter(name__icontains = word,adress__icontains = loc_q,npatak__icontains = goall)
+    maininfo = MainInfo.objects.first()
+    homestatus=HomeStatus.objects.all()
+    imagecycle=ImageCycle.objects.first()
+    propertytypes=PropertyTypes.objects.all()
+    propertytypesjarang=PropertyTypesJarang.objects.all()
+    moreinformation= MoreInformation.objects.all()
+    contactagent=ContactAgent.objects.all()
+    propertyagent=PropertyAgent.objects.all()
+    client=Client.objects.all()
+    gallery=Gallery.objects.all()
+
     context = {
-        'statusinfo':statusinfo,
-        'imgcycle':imgcycle,
-        'propertyTypesJarang':propertyTypesJarang,
+        'maininfo':maininfo,
+        'homestatus':homestatus,
+        'imagecycle':imagecycle,
+        'propertytypes':propertytypes,
+        'propertytypesjarang':propertytypesjarang,
         'moreinformation':moreinformation,
-        'proplisting':proplisting,
+        'propertylisting':propertylisting,
         'contactagent':contactagent,
         'propertyagent':propertyagent,
         'client':client,
+        'gallery':gallery
                 }
     MainInfoF(context,'home','')
     
@@ -100,8 +107,10 @@ def SearchItem(request):
 
 
 
-class HomeListView(ListView):
+class HomeListView(LoginRequiredMixin,ListView):
+
     template_name = 'index.html'
+    login_url = 'register/'
 
     def get(self, request) :
         maininfo = MainInfo.objects.first()
@@ -110,7 +119,7 @@ class HomeListView(ListView):
         propertytypes=PropertyTypes.objects.all()
         propertytypesjarang=PropertyTypesJarang.objects.all()
         moreinformation= MoreInformation.objects.all()
-        propertylisting=PropertyListing.objects.all()
+        propertylisting=PropertyListing.objects.all()[:6]
         contactagent=ContactAgent.objects.all()
         propertyagent=PropertyAgent.objects.all()
         client=Client.objects.all()
@@ -180,6 +189,7 @@ class PropertyListView(ListView):
         return render(request,self.template_name,context)
     
     def post(self,request):
+        message=''
         form = AddPropertyForm(request.POST,request.FILES)
         if form.is_valid():
             form.save()
@@ -274,6 +284,13 @@ class ContactPage(DetailView):
     def post(self,request):
         form = ContactForm(request.POST)
         if form.is_valid():
+            emaill = EmailMessage(
+                subject = f'Hello {request.POST.get("username")}',
+                body = 'Sign up completed succesfully',
+                from_email=EMAIL_HOST_USER,
+                to = [request.POST.get("email")]
+            )
+            emaill.send()
             form.save()
             return redirect('home')
         else:
